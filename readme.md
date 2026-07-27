@@ -84,7 +84,7 @@ class UserService {
 
 ## Event Broadcast
 
-A synchronous publish/subscribe. Subscribe to a channel (or to *all* channels)
+A synchronous publish/subscribe. Subscribe to a channel (or to _all_ channels)
 and receive an `Unsubscription` function to detach later.
 
 ```typescript
