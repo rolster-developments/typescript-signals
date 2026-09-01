@@ -39,6 +39,12 @@ export function registerBroadcastAll<C = string>(
 export function emitBroadcast<C = string, V = any>(channel: C, value: V): void {
   const _subscriptions = subscriptions.get(channel);
 
+  if ((!_subscriptions || _subscriptions.size === 0) && broadcasts.size === 0) {
+    return console.warn(
+      `No se encontraron subscripciones ni broadcasts para el canal ${String(channel)}`
+    );
+  }
+
   if (_subscriptions) {
     Array.from(_subscriptions.values()).forEach((subscription) => {
       subscription(value);

@@ -1,5 +1,5 @@
 import { registerDependency } from '@rolster/invertly';
-import { describe, it, expect, vi } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 
 import {
   EventBus,
@@ -36,6 +36,31 @@ describe('registerEventBus and emitEventBus', () => {
     const results = await emitEventBus({ event: 'unknown', value: 1 });
 
     expect(results).toEqual([]);
+  });
+});
+
+describe('emitEventBus warning', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should warn when there are no subscribers for the event', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    await emitEventBus({ event: 'unknown-event', value: 1 });
+
+    expect(warn).toHaveBeenCalledWith(
+      'No se encontraron subscripciones para el evento unknown-event'
+    );
+  });
+
+  it('should not warn when there are subscribers for the event', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    registerEventBus({ event: 'with-subscriber', subscription: TestSubscriber });
+    await emitEventBus({ event: 'with-subscriber', value: 1 });
+
+    expect(warn).not.toHaveBeenCalled();
   });
 });
 

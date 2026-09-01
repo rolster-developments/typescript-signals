@@ -39,7 +39,11 @@ export function emitEventBus<T, K = string>({
 }: EmitterOptions<K, T>): Promise<any[]> {
   const _subscriptions = subscriptions.get(event);
 
-  if (!_subscriptions) {
+  if (!_subscriptions || _subscriptions.size === 0) {
+    console.warn(
+      `No se encontraron subscripciones para el evento ${String(event)}`
+    );
+
     return Promise.resolve([]);
   }
 

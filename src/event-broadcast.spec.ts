@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 
 import {
   EventBroadcast,
@@ -35,6 +35,53 @@ describe('registerBroadcastChannel', () => {
     emitBroadcast('channel-b', 'value');
 
     expect(subscription).not.toHaveBeenCalled();
+  });
+});
+
+describe('emitBroadcast warning', () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should warn when there are no subscriptions nor broadcasts for the channel', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    emitBroadcast('empty-channel', 'value');
+
+    expect(warn).toHaveBeenCalledWith(
+      'No se encontraron subscripciones ni broadcasts para el canal empty-channel'
+    );
+  });
+
+  it('should warn when the channel subscriptions list is empty', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    const unsubscribe = registerBroadcastChannel('was-subscribed', vi.fn());
+    unsubscribe();
+
+    emitBroadcast('was-subscribed', 'value');
+
+    expect(warn).toHaveBeenCalledWith(
+      'No se encontraron subscripciones ni broadcasts para el canal was-subscribed'
+    );
+  });
+
+  it('should not warn when there are subscriptions for the channel', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    registerBroadcastChannel('channel-with-sub', vi.fn());
+    emitBroadcast('channel-with-sub', 'value');
+
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  it('should not warn when there are broadcasts listening', () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    registerBroadcastAll(vi.fn());
+    emitBroadcast('channel-with-broadcast', 'value');
+
+    expect(warn).not.toHaveBeenCalled();
   });
 });
 
