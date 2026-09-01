@@ -9,7 +9,7 @@ const subscriptions = new SecureMap<Map<any, Subscription>, any>(
   () => new Map()
 );
 
-export function registerBroadcastChannel<C = string, V = any>(
+export function registerBroadcastChannel<V = any, C = string>(
   channel: C,
   subscription: Subscription<V>
 ): Unsubscription {
@@ -36,7 +36,7 @@ export function registerBroadcastAll<C = string>(
   };
 }
 
-export function emitBroadcast<C = string, V = any>(channel: C, value: V): void {
+export function emitBroadcast<V = any, C = string>(channel: C, value: V): void {
   const _subscriptions = subscriptions.get(channel);
 
   if ((!_subscriptions || _subscriptions.size === 0) && broadcasts.size === 0) {

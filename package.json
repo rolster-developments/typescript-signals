@@ -1,6 +1,6 @@
 {
   "name": "@rolster/signals",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "type": "module",
   "description": "Package containing functionality to implement messaging patterns in Typescript projects.",
   "license": "MIT",
