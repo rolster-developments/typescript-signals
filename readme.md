@@ -1,11 +1,11 @@
-# Rolster Messenger Service
+# Rolster Signals
 
-Library that allows you to manage messaging services.
+Package containing functionality to implement messaging patterns in Typescript projects.
 
 ## Installation
 
 ```
-npm i @rolster/messenger-service
+npm i @rolster/signals
 ```
 
 ## Configuration
@@ -41,7 +41,7 @@ import {
   registerEventBus,
   emitEventBus,
   EventBus
-} from '@rolster/messenger-service';
+} from '@rolster/signals';
 
 interface UserCreated {
   id: string;
@@ -67,11 +67,18 @@ await emitEventBus({
 You can register several subscribers for the same event; `emitEventBus` runs
 them all (`Promise.all`) and returns their results. Subscriber instances are
 created via `@rolster/invertly`, so they can receive injected dependencies.
+When no subscriber is registered for the event, `emitEventBus` logs a warning
+on the console and resolves with an empty array (`[]`).
 
-The injectable `EventBus` class is a thin wrapper carrying a DI `context`,
-convenient inside other injectables:
+The injectable `EventBus` class is a thin wrapper carrying a DI `context` that
+is forwarded to every subscriber created for the emitted event. Decorate the
+consumer with `@Injectable()` so `@rolster/invertly` can resolve it:
 
 ```typescript
+import { Injectable } from '@rolster/invertly';
+import { EventBus } from '@rolster/signals';
+
+@Injectable()
 class UserService {
   constructor(private readonly eventBus: EventBus) {}
 
@@ -82,13 +89,18 @@ class UserService {
 }
 ```
 
+`AbstractEventBus<K>` is the abstract contract implemented by `EventBus`
+(`emit<T>(event: K, value: T): Promise<any[]>`). Use it as the injection token
+when you prefer depending on the abstraction and bind it to `EventBus` (or a
+test double) through the `@rolster/invertly` locator.
+
 ## Event Broadcast
 
 A synchronous publish/subscribe. Subscribe to a channel (or to _all_ channels)
 and receive an `Unsubscription` function to detach later.
 
 ```typescript
-import { EventBroadcast } from '@rolster/messenger-service';
+import { EventBroadcast } from '@rolster/signals';
 
 const broadcast = new EventBroadcast<string>();
 
@@ -111,6 +123,14 @@ off(); // stop listening to the 'toast' channel
 The same behaviour is available as standalone functions when you don't want to
 hold an instance: `registerBroadcastChannel(channel, fn)`,
 `registerBroadcastAll(fn)` and `emitBroadcast(channel, value)`.
+
+All `EventBroadcast` instances and the standalone functions share a single,
+module-level registry: a subscription made on one instance receives emissions
+made from any other instance or from `emitBroadcast`. An instance is only a
+typed facade over that global registry, not an isolated channel set.
+
+When a channel has no subscribers and no "all" listener is registered,
+`emitBroadcast` logs a warning on the console and does nothing else.
 
 ## Contributing
 
