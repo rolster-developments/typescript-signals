@@ -57,7 +57,10 @@ describe('emitEventBus warning', () => {
   it('should not warn when there are subscribers for the event', async () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
 
-    registerEventBus({ event: 'with-subscriber', subscription: TestSubscriber });
+    registerEventBus({
+      event: 'with-subscriber',
+      subscription: TestSubscriber
+    });
     await emitEventBus({ event: 'with-subscriber', value: 1 });
 
     expect(warn).not.toHaveBeenCalled();
