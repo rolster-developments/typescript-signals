@@ -134,4 +134,4 @@ When a channel has no subscribers and no "all" listener is registered,
 
 ## Contributing
 
-- Daniel Andrés Castillo Pedroza :rocket:
+:sparkles: Daniel Andrés Castillo Pedroza
