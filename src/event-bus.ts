@@ -7,7 +7,7 @@ import {
 } from '@rolster/invertly';
 
 export abstract class EventBusSubscriber<T = any, V = any> {
-  abstract execute(value: T): V | Promise<V>;
+  abstract execute(value: T): Awaitable<V>;
 }
 
 type Subscription = Constructable<EventBusSubscriber>;
