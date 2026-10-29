@@ -20,8 +20,8 @@ class FailingSubscriber extends EventBusSubscriber<number, string> {
   }
 }
 
-registerDependency(TestSubscriber, { injectable: TestSubscriber });
-registerDependency(FailingSubscriber, { injectable: FailingSubscriber });
+registerDependency(TestSubscriber, {});
+registerDependency(FailingSubscriber, {});
 
 describe('registerEventBus and emitEventBus', () => {
   it('should execute registered subscriber', async () => {
