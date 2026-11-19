@@ -3,5 +3,5 @@ import rolster from '@rolster/rollup';
 export default rolster({
   requiredEsm: true,
   entryFiles: ['index'],
-  packages: ['@rolster/commons', '@rolster/invertly']
+  packages: ['@rolster/commons', '@rolster/invertly', 'uuid']
 });
